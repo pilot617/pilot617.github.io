@@ -14,6 +14,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        // Ensure proper file extensions for GitHub Pages
+        entryFileNames: 'assets/[name]-[hash].mjs',
+        chunkFileNames: 'assets/[name]-[hash].mjs',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },
