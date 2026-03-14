@@ -1,0 +1,2 @@
+# This file tells GitHub Pages to skip Jekyll processing
+# This prevents MIME type issues with ES6 modules 
