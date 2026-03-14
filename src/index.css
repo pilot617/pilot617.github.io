@@ -123,3 +123,59 @@ html {
 .neon-divider {
   border-color: rgba(0, 255, 245, 0.15);
 }
+
+/* Blog prose overrides for the neon theme */
+.blog-prose {
+  --tw-prose-body: #d1d5db;
+  --tw-prose-headings: #fff;
+  --tw-prose-links: #00fff5;
+  --tw-prose-bold: #fff;
+  --tw-prose-code: #00fff5;
+  --tw-prose-pre-bg: rgba(17, 24, 39, 0.8);
+  --tw-prose-pre-code: #d1d5db;
+  --tw-prose-quotes: #9ca3af;
+  --tw-prose-quote-borders: rgba(0, 255, 245, 0.3);
+  --tw-prose-counters: #9ca3af;
+  --tw-prose-bullets: #00fff5;
+  --tw-prose-hr: rgba(0, 255, 245, 0.15);
+  --tw-prose-th-borders: rgba(255, 255, 255, 0.1);
+  --tw-prose-td-borders: rgba(255, 255, 255, 0.05);
+}
+
+.blog-prose a {
+  text-decoration-color: rgba(0, 255, 245, 0.4);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.blog-prose a:hover {
+  text-decoration-color: #00fff5;
+}
+
+.blog-prose pre {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+}
+
+.blog-prose code:not(pre code) {
+  background: rgba(0, 255, 245, 0.08);
+  border: 1px solid rgba(0, 255, 245, 0.15);
+  border-radius: 0.25rem;
+  padding: 0.15em 0.35em;
+  font-size: 0.875em;
+}
+
+.blog-prose blockquote {
+  border-left-width: 3px;
+  font-style: normal;
+}
+
+.blog-prose img {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.blog-prose h1,
+.blog-prose h2,
+.blog-prose h3 {
+  scroll-margin-top: 5rem;
+}
