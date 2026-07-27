@@ -59,7 +59,27 @@ export default function BlogPostPage() {
             </header>
 
             <div className="prose prose-invert prose-lg max-w-none blog-prose">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  img({ src, alt }) {
+                    if (src?.match(/\.(mp4|webm|ogg)$/i)) {
+                      return (
+                        <video
+                          src={src}
+                          controls
+                          playsInline
+                          className="w-full rounded-xl border border-gray-800 my-6"
+                          aria-label={alt}
+                        />
+                      );
+                    }
+                    return <img src={src} alt={alt} />;
+                  },
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
             </div>
 
             <div className="mt-16 pt-8 border-t border-gray-800">
