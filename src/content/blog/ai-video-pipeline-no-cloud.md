@@ -141,6 +141,8 @@ Output: a 6.3 MB, 1920×1080, H.264 MP4.
 
 ## The Result
 
+![Pythagorean theorem explainer video](/videos/pythagoras-tutorial.mp4)
+
 A 60-second Pythagorean theorem explainer with:
 
 - AI-generated narration, timed to visual cues
