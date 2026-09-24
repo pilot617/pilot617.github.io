@@ -1,110 +1,121 @@
-import { Link } from 'react-router-dom';
-import { Calendar, Tag, ArrowRight, BookOpen } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search, X } from 'lucide-react';
 import Layout from '../components/Layout';
 import FadeIn from '../components/FadeIn';
+import ArticleCard from '../components/ArticleCard';
 import posts from '../content/blog';
 
-const colorStyles = [
-  {
-    card: 'neon-cyan hover:border-neon-cyan/30',
-    title: 'group-hover:text-neon-cyan',
-    tag: 'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20',
-    read: 'text-neon-cyan',
-  },
-  {
-    card: 'neon-magenta hover:border-neon-magenta/30',
-    title: 'group-hover:text-neon-magenta',
-    tag: 'bg-neon-magenta/10 text-neon-magenta border-neon-magenta/20',
-    read: 'text-neon-magenta',
-  },
-  {
-    card: 'neon-green hover:border-neon-green/30',
-    title: 'group-hover:text-neon-green',
-    tag: 'bg-neon-green/10 text-neon-green border-neon-green/20',
-    read: 'text-neon-green',
-  },
-  {
-    card: 'neon-yellow hover:border-neon-yellow/30',
-    title: 'group-hover:text-neon-yellow',
-    tag: 'bg-neon-yellow/10 text-neon-yellow border-neon-yellow/20',
-    read: 'text-neon-yellow',
-  },
-];
-
+const categories = ['All notes', 'AI & engineering', 'Personal'] as const;
 export default function BlogListPage() {
+  useEffect(() => {
+    document.title = 'Writing — Sampat Choudhary';
+    return () => {
+      document.title = 'Sampat Choudhary — Software & AI Engineer';
+    };
+  }, []);
+  const [category, setCategory] = useState<string>('All notes');
+  const [query, setQuery] = useState('');
+  const filtered = posts.filter((post) => {
+    const matchesCategory =
+      category === 'All notes' ||
+      (category === 'Personal' ? post.tags.includes('personal') : !post.tags.includes('personal'));
+    return (
+      matchesCategory &&
+      `${post.title} ${post.description} ${post.tags.join(' ')}`
+        .toLowerCase()
+        .includes(query.toLowerCase().trim())
+    );
+  });
   return (
     <Layout>
-      <div className="container mx-auto px-6 pt-32 pb-20">
+      <div className="container writing-page">
         <FadeIn>
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <BookOpen className="w-8 h-8 text-neon-cyan" />
-              <h1 className="text-4xl md:text-5xl font-bold">Blog</h1>
-            </div>
-            <p className="text-xl text-gray-400">
-              Tech deep-dives, career reflections, and side-project updates.
+          <header className="page-heading">
+            <p className="eyebrow">
+              <span className="accent">THE WORKBENCH</span>
+              <span className="label-rule" />
+              NOTES, IDEAS & EXPERIMENTS
             </p>
-          </div>
+            <h1>
+              Thinking out loud.
+              <br />
+              <span className="muted">Building in the open.</span>
+            </h1>
+            <p>
+              Lessons from production, explorations in AI, and the occasional side quest. Written by
+              an engineer, for the curious.
+            </p>
+          </header>
         </FadeIn>
-
-        {posts.length === 0 ? (
-          <FadeIn>
-            <div className="text-center py-20">
-              <p className="text-gray-500 text-lg">No posts yet. Check back soon!</p>
-            </div>
-          </FadeIn>
-        ) : (
-          <div className="max-w-3xl mx-auto space-y-8">
-            {posts.map((post, idx) => {
-              const colors = colorStyles[idx % colorStyles.length];
-              return (
-                <FadeIn key={post.slug}>
-                  <Link
-                    to={`/blog/${post.slug}`}
-                    className={`block bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover ${colors.card} group transition-all`}
-                  >
-                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                      <Calendar className="w-4 h-4" />
-                      <time dateTime={post.date}>
-                        {new Date(post.date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </time>
-                    </div>
-
-                    <h2 className={`text-2xl font-semibold mb-3 ${colors.title} transition-colors`}>
-                      {post.title}
-                    </h2>
-
-                    <p className="text-gray-400 mb-4 leading-relaxed">
-                      {post.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap gap-2">
-                        {post.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className={`flex items-center gap-1 ${colors.tag} border px-2 py-1 rounded text-xs`}
-                          >
-                            <Tag className="w-3 h-3" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <span className={`flex items-center gap-1 text-sm ${colors.read} opacity-0 group-hover:opacity-100 transition-opacity`}>
-                        Read <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </div>
-                  </Link>
-                </FadeIn>
-              );
-            })}
+        <div className="writing-controls">
+          <div className="filter-tabs" role="group" aria-label="Filter writing by category">
+            {categories.map((item) => (
+              <button key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>
+                {item}
+              </button>
+            ))}
+          </div>
+          <div className="search-field">
+            <Search size={17} aria-hidden="true" />
+            <label className="sr-only" htmlFor="search-writing">
+              Search writing
+            </label>
+            <input
+              id="search-writing"
+              type="search"
+              placeholder="Find a note…"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            {query && (
+              <button
+                className="icon-button"
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        </div>
+        <p className="result-count" role="status">
+          {filtered.length} {filtered.length === 1 ? 'note' : 'notes'}
+          {query ? ` matching “${query}”` : ' from the workbench'}
+        </p>
+        <div className="article-list">
+          {filtered.map((post, index) => (
+            <ArticleCard key={post.slug} post={post} index={index} headingLevel="h2" />
+          ))}
+        </div>
+        {filtered.length === 0 && (
+          <div className="empty-state">
+            <Search size={28} aria-hidden="true" />
+            <h2>No notes found.</h2>
+            <p>Try another search or explore all the writing.</p>
+            <button
+              className="button button-secondary"
+              onClick={() => {
+                setQuery('');
+                setCategory('All notes');
+              }}
+            >
+              Show all notes <ArrowIcon />
+            </button>
           </div>
         )}
+        <div className="writing-end">
+          <span className="tiny-cross" aria-hidden="true">
+            +
+          </span>
+          <p>Learning is better when you share it.</p>
+          <a className="text-link" href="mailto:sampat0choudhary@gmail.com">
+            Let’s compare notes <ArrowIcon />
+          </a>
+        </div>
       </div>
     </Layout>
   );
+}
+function ArrowIcon() {
+  return <span aria-hidden="true">↗</span>;
 }

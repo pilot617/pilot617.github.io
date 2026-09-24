@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#141613"/>
+<rect x="64" y="54" width="43" height="43" rx="8" fill="#d2eaa2"/>
+<text x="75" y="83" fill="#202717" font-family="Arial,sans-serif" font-size="32" font-weight="bold">s.</text>
+<text x="123" y="82" fill="#f0f0e8" font-family="Arial,sans-serif" font-size="22">Sampat Choudhary</text>
+<path d="M64 124H1136" stroke="#34372f"/>
+<text x="64" y="194" fill="#a3a69b" font-family="monospace" font-size="13" letter-spacing="2">SOFTWARE ENGINEER. SYSTEMS THINKER.</text>
+<text x="59" y="289" fill="#f0f0e8" font-family="Arial,sans-serif" font-weight="bold" font-size="66" letter-spacing="-3">Complex systems.</text>
+<text x="59" y="368" fill="#d2eaa2" font-family="Arial,sans-serif" font-weight="bold" font-size="66" letter-spacing="-3">Human outcomes.</text>
+<text x="64" y="431" fill="#a3a69b" font-family="Arial,sans-serif" font-size="21">Building at the intersection of AI, voice, and reliable infrastructure.</text>
+<g fill="none" stroke="#748752" stroke-width="1" opacity=".8"><circle cx="963" cy="284" r="133"/><ellipse cx="963" cy="284" rx="75" ry="133" transform="rotate(-28 963 284)"/><ellipse cx="963" cy="284" rx="35" ry="133" transform="rotate(-28 963 284)"/><ellipse cx="963" cy="284" rx="133" ry="45" transform="rotate(-28 963 284)"/><ellipse cx="963" cy="284" rx="133" ry="94" transform="rotate(-28 963 284)"/><ellipse cx="963" cy="284" rx="168" ry="63" transform="rotate(-35 963 284)"/></g>
+<circle cx="963" cy="284" r="30" fill="#1b1e18" stroke="#748752"/><path d="M963 265V303M944 284H982M950 271L976 297M950 297L976 271" stroke="#d2eaa2" stroke-width="2"/>
+<path d="M64 520H1136" stroke="#34372f"/><text x="64" y="570" fill="#a3a69b" font-family="monospace" font-size="15">PRODIGAL · EX-MICROSOFT · IIT KANPUR</text><text x="937" y="570" fill="#d2eaa2" font-family="monospace" font-size="16">pilot617.github.io</text>
+</svg>

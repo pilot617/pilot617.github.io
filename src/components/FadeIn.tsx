@@ -1,52 +1,41 @@
 import { useEffect, useRef } from 'react';
 
-function useFadeIn() {
+export default function FadeIn({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    // Fallback: ensure content doesn't render as blank if IntersectionObserver doesn't fire.
-    const addVisible = () => el.classList.add('visible');
-
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
-      addVisible();
+    const element = ref.current;
+    if (
+      !element ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !('IntersectionObserver' in window)
+    )
       return;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          addVisible();
-          observer.unobserve(el);
+          element.animate(
+            [
+              { opacity: 0.5, transform: 'translateY(16px)' },
+              { opacity: 1, transform: 'translateY(0)' },
+            ],
+            { duration: 550, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' },
+          );
+          observer.unobserve(element);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.08 },
     );
-
-    observer.observe(el);
-
-    // In some navigation / deep-link cases, the callback may not fire immediately.
-    // This prevents a "blank page" UX regression.
-    const timeoutId = window.setTimeout(() => {
-      if (!el.classList.contains('visible')) {
-        addVisible();
-        observer.disconnect();
-      }
-    }, 1500);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      observer.disconnect();
-    };
+    observer.observe(element);
+    return () => observer.disconnect();
   }, []);
-  return ref;
-}
-
-export default function FadeIn({ children, className = '', stagger = false }: { children: React.ReactNode; className?: string; stagger?: boolean }) {
-  const ref = useFadeIn();
   return (
-    <div ref={ref} className={`${stagger ? 'stagger-children' : 'fade-in-section'} ${className}`}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );

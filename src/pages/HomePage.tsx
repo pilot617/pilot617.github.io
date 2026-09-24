@@ -1,455 +1,644 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Github, Linkedin, Mail, Code2, Database, Terminal, Award, Users, Zap, Shield, Brain, GraduationCap, MapPin, Phone, Download, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  AudioLines,
+  Braces,
+  Check,
+  ChevronDown,
+  Copy,
+  Download,
+  GraduationCap,
+  Layers3,
+  MapPin,
+  ShieldCheck,
+  Terminal,
+} from 'lucide-react';
 import FadeIn from '../components/FadeIn';
 import Layout from '../components/Layout';
+import SystemVisual from '../components/SystemVisual';
+import ArticleCard from '../components/ArticleCard';
+import posts from '../content/blog';
+
+const experience = [
+  {
+    company: 'Prodigal',
+    role: 'Senior Software Engineer',
+    date: 'APR 2025 — PRESENT',
+    mark: 'p',
+    current: true,
+    summary: 'Giving intelligent systems a voice.',
+    points: [
+      'Building ProAgent with the team: a voice AI system that supports debt collectors through automated phone calls.',
+      'Designed in-house voice orchestration for real-time calls with LLM-powered agents.',
+      'Created multi-state prompt flows and tools for multi-agent, multi-tenant deployments.',
+    ],
+    stack: 'Voice AI / LLMs / LiveKit / Python',
+  },
+  {
+    company: 'Microsoft',
+    role: 'Software Engineer II',
+    date: 'FEB 2024 — APR 2025',
+    mark: 'ms',
+    summary: 'Making enterprise systems more secure.',
+    points: [
+      'Designed user and service-to-service authentication and authorization for Viva Goals.',
+      'Implemented Continuous Access Evaluation for financial services security requirements.',
+      'Built an audit-log worker service with Azure Event Hub and Azure Functions.',
+    ],
+    stack: 'C# / .NET / Azure / Authentication',
+  },
+  {
+    company: 'Microsoft',
+    role: 'Software Engineer I',
+    date: 'NOV 2021 — FEB 2024',
+    mark: 'ms',
+    summary: 'Building the foundations of access and trust.',
+    points: [
+      'Designed a scalable OKR permission model across users, groups, and teams.',
+      'Developed an ASP.NET Core authentication service with MISE and SAL.',
+      'Partnered with Microsoft’s AuthNZ team on authentication security and PFT tokens.',
+    ],
+    stack: 'ASP.NET Core / Authorization / Full-stack',
+  },
+  {
+    company: 'Ally.io',
+    role: 'Software Engineer',
+    date: 'AUG 2020 — OCT 2021',
+    mark: 'a',
+    summary: 'Taking features from idea to production.',
+    points: [
+      'Revamped the admin application to help Customer Support resolve frequent requests.',
+      'Shipped end-to-end features with AngularJS and Ruby on Rails.',
+      'Built background jobs with Sidekiq and data insights features with Go and MongoDB.',
+    ],
+    stack: 'Ruby on Rails / AngularJS / Go / MongoDB',
+  },
+];
+const skills = [
+  {
+    icon: AudioLines,
+    title: 'Intelligent systems',
+    text: 'Voice AI, LLM integration, multi-agent orchestration',
+    tools: 'LiveKit · Deepgram · ElevenLabs · LangSmith',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Security by design',
+    text: 'Authentication, authorization, permission models',
+    tools: 'OAuth · S2S auth · Continuous Access Evaluation',
+  },
+  {
+    icon: Layers3,
+    title: 'End-to-end engineering',
+    text: 'From thoughtful interfaces to resilient infrastructure',
+    tools: 'React · TypeScript · Python · C# · .NET · Go',
+  },
+  {
+    icon: Braces,
+    title: 'Built for production',
+    text: 'Cloud infrastructure, background jobs, data systems',
+    tools: 'Azure · Kubernetes · Docker · SQL · MongoDB',
+  },
+];
+
+function SectionHeading({
+  number,
+  label,
+  title,
+  children,
+}: {
+  number: string;
+  label: string;
+  title: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="section-heading">
+      <div>
+        <p className="eyebrow">
+          <span className="accent">{number}</span>
+          <span className="label-rule" />
+          {label}
+        </p>
+        <h2>{title}</h2>
+      </div>
+      {children}
+    </div>
+  );
+}
 
 export default function HomePage() {
-  const fallbackRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState('');
-  const location = useLocation();
-
+  const [copyStatus, setCopyStatus] = useState('');
+  const copyTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
-    const sections = ['education', 'experience', 'skills', 'achievements', 'projects', 'contact'];
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
       },
-      { threshold: 0.3 }
+      { rootMargin: '-20% 0px -55% 0px', threshold: 0 },
     );
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    document.querySelectorAll('section[id]').forEach((section) => observer.observe(section));
+    return () => {
+      observer.disconnect();
+      clearTimeout(copyTimer.current);
+    };
   }, []);
-
-  // Handle scroll-to-section when navigating back from blog
-  useEffect(() => {
-    const scrollTo = (location.state as { scrollTo?: string })?.scrollTo;
-    if (scrollTo) {
-      setTimeout(() => {
-        document.getElementById(scrollTo)?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+  async function copyEmail() {
+    clearTimeout(copyTimer.current);
+    try {
+      await navigator.clipboard.writeText('sampat0choudhary@gmail.com');
+      setCopyStatus('Email copied');
+    } catch {
+      setCopyStatus('Select the email address to copy it.');
     }
-  }, [location.state]);
-
+    copyTimer.current = setTimeout(() => setCopyStatus(''), 4000);
+  }
   return (
     <Layout activeSection={activeSection}>
-      {/* Hero Section */}
-      <header className="container mx-auto px-6 py-16 md:py-32 mt-16">
-        <div className="flex flex-col md:flex-row gap-12 items-center">
-          <div className="md:w-1/3">
-            <div className="relative">
-              <div className="w-full max-w-md aspect-square bg-gray-900 rounded-2xl border-2 border-neon-cyan/20 flex items-center justify-center overflow-hidden profile-glow">
-                <img
-                  src="/profile.jpg"
-                  alt="Sampat Choudhary"
-                  className="w-full h-full object-cover"
-                  onError={() => {
-                    if (fallbackRef.current) {
-                      fallbackRef.current.style.display = 'flex';
-                    }
-                  }}
-                />
-                <div ref={fallbackRef} className="text-center hidden" id="fallback">
-                  <div className="w-32 h-32 bg-gradient-to-br from-neon-cyan to-neon-magenta rounded-full mx-auto mb-4 flex items-center justify-center text-4xl font-bold text-gray-950">
-                    SC
-                  </div>
-                  <p className="text-neon-cyan font-medium">Sampat Choudhary</p>
-                </div>
-              </div>
+      <section className="hero container" aria-labelledby="hero-title">
+        <div className="hero-copy">
+          <p className="eyebrow hero-intro">
+            <span className="status-dot" /> SOFTWARE ENGINEER. SYSTEMS THINKER.
+          </p>
+          <h1 id="hero-title">
+            Complex systems.
+            <br />
+            <span className="accent">Human outcomes.</span>
+          </h1>
+          <p className="hero-description">
+            I’m Sampat, a senior software engineer building at the intersection of{' '}
+            <strong>AI, voice, and reliable infrastructure.</strong> Turning hard problems into
+            things that work beautifully.
+          </p>
+          <div className="hero-actions">
+            <Link className="button button-primary" to="/#work">
+              Explore my work <ArrowDown size={17} aria-hidden="true" />
+            </Link>
+            <a
+              className="button button-text"
+              href="/sampat-resume.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              View résumé <ArrowUpRight size={17} aria-hidden="true" />
+            </a>
+          </div>
+          <div className="hero-person">
+            <img src="/profile.webp" alt="" width="40" height="40" />
+            <div>
+              Currently building voice AI at <strong>Prodigal</strong>
+              <span>Previously Microsoft · Based in Bangalore, India</span>
             </div>
           </div>
-          <div className="md:w-2/3">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-3 h-3 bg-neon-green rounded-full animate-pulse"></div>
-              <span className="text-neon-green text-sm font-medium">Available for opportunities</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Sampat Choudhary
-              <span className="block text-neon-cyan text-2xl md:text-3xl font-normal mt-2">Senior Software Engineer</span>
-            </h1>
-            <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-              Experienced software engineer with expertise in AI/ML systems, authentication & authorization,
-              and full-stack development. Currently building voice AI systems at Prodigal, with previous
-              experience at Microsoft developing enterprise-scale applications.
+        </div>
+        <SystemVisual />
+        <div className="hero-bottom">
+          <span className="eyebrow">A LITTLE CURIOSITY. A LOT OF ENGINEERING.</span>
+          <Link to="/#work" className="scroll-link">
+            Scroll to explore <ArrowDown size={14} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+      <div className="credentials-strip">
+        <div className="container credentials-inner">
+          <span className="eyebrow">BUILT WITH GREAT TEAMS</span>
+          <span className="company-wordmark prodigal-wordmark">
+            prodigal<span className="accent">.</span>
+          </span>
+          <span className="company-wordmark">
+            <span className="microsoft-mark" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <i />
+            </span>
+            Microsoft
+          </span>
+          <span className="company-wordmark ally-wordmark">
+            ally<span className="muted">.io</span>
+          </span>
+          <span className="education-wordmark">
+            <GraduationCap size={24} aria-hidden="true" />
+            IIT Kanpur
+          </span>
+        </div>
+      </div>
+      <section className="section container" id="work">
+        <FadeIn>
+          <SectionHeading number="01" label="SELECTED WORK" title="Ideas, engineered into reality.">
+            <p>
+              A selection of systems I’ve built,
+              <br className="desktop-break" /> problems I’ve solved, and things I’m exploring.
             </p>
-            <div className="flex flex-wrap gap-3 mb-8">
-              <div className="flex items-center gap-2 bg-neon-magenta/10 px-4 py-2 rounded-lg border border-neon-magenta/30 hover:bg-neon-magenta/20 transition-colors">
-                <Shield className="w-4 h-4 text-neon-magenta" />
-                <span className="text-sm text-neon-magenta/90">Authentication & Security</span>
+          </SectionHeading>
+        </FadeIn>
+        <FadeIn>
+          <article className="project-featured">
+            <div className="project-copy">
+              <p className="eyebrow accent">PRODIGAL / VOICE AI</p>
+              <h3>
+                More than a voice.
+                <br />A system that listens.
+              </h3>
+              <p>
+                Real-time conversations are messy. I build the orchestration that keeps AI agents
+                responsive, context-aware, and reliable—even when people interrupt.
+              </p>
+              <div className="tags">
+                <span>Real-time systems</span>
+                <span>LLM orchestration</span>
+                <span>Voice AI</span>
               </div>
-              <div className="flex items-center gap-2 bg-neon-cyan/10 px-4 py-2 rounded-lg border border-neon-cyan/30 hover:bg-neon-cyan/20 transition-colors">
-                <Brain className="w-4 h-4 text-neon-cyan" />
-                <span className="text-sm text-neon-cyan/90">AI/ML Systems</span>
+              <Link to="/blog/handling-interruptions-in-voice-ai-agents" className="text-link">
+                Inside the engineering <ArrowUpRight size={18} aria-hidden="true" />
+              </Link>
+            </div>
+            <div
+              className="voice-visual"
+              aria-label="Voice agent architecture: speech flows through transcription, an AI agent, and voice synthesis"
+              role="img"
+            >
+              <div className="diagram-header">
+                <span className="eyebrow">THE CONVERSATION LOOP</span>
+                <span className="diagram-status">
+                  <span className="status-dot" />
+                  REAL-TIME
+                </span>
               </div>
-              <div className="flex items-center gap-2 bg-neon-green/10 px-4 py-2 rounded-lg border border-neon-green/30 hover:bg-neon-green/20 transition-colors">
-                <Zap className="w-4 h-4 text-neon-green" />
-                <span className="text-sm text-neon-green/90">Full-Stack Development</span>
+              <div className="waveform" aria-hidden="true">
+                {Array.from({ length: 49 }, (_, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      height: `${12 + Math.abs(Math.sin(i * 1.8) * Math.cos(i * 0.24)) * 65}px`,
+                    }}
+                  />
+                ))}
               </div>
+              <div className="pipeline" aria-hidden="true">
+                <div>
+                  <AudioLines size={19} />
+                  <span>Speech</span>
+                </div>
+                <ArrowRight size={15} />
+                <div>
+                  <Braces size={19} />
+                  <span>LLM agent</span>
+                </div>
+                <ArrowRight size={15} />
+                <div>
+                  <AudioLines size={19} />
+                  <span>Voice</span>
+                </div>
+              </div>
+              <div className="feedback-path" aria-hidden="true">
+                <span>CONTEXT + TOOL EXECUTION</span>
+              </div>
+              <p className="diagram-caption">Human conversation. Engineered continuity.</p>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }} className="bg-neon-cyan text-gray-950 hover:bg-neon-cyan/80 px-8 py-3 rounded-lg font-semibold transition-all shadow-lg shadow-neon-cyan/20 hover:shadow-neon-cyan/30 hover:-translate-y-0.5">
-                Get in Touch
+          </article>
+        </FadeIn>
+        <div className="project-grid" id="projects">
+          <FadeIn>
+            <article className="project-card">
+              <div className="project-art terminal-art" aria-hidden="true">
+                <div className="terminal-title">
+                  <span />
+                  <span />
+                  <span />
+                  <span>agent / workspace</span>
+                </div>
+                <div className="terminal-lines">
+                  <p>
+                    <span className="accent">❯</span> understand the codebase
+                  </p>
+                  <p className="muted">↳ reading context and dependencies</p>
+                  <p>
+                    <span className="accent">❯</span> make a thoughtful change
+                  </p>
+                  <p className="muted">↳ edit → validate → iterate</p>
+                  <p className="terminal-success">
+                    <Check size={14} /> Built for the developer’s workflow.
+                  </p>
+                </div>
+                <Terminal className="terminal-watermark" size={110} />
+              </div>
+              <div className="project-card-content">
+                <p className="eyebrow">DEVELOPER TOOLS / SIDE PROJECT</p>
+                <h3>A better loop for building.</h3>
+                <p>
+                  An agentic code assistant and companion CLI that bring AI-powered analysis and
+                  code modification into the development workflow.
+                </p>
+                <div className="tags">
+                  <span>Python</span>
+                  <span>FastAPI</span>
+                  <span>LiteLLM</span>
+                </div>
+                <details className="project-details">
+                  <summary>
+                    Explore the project <ChevronDown size={17} aria-hidden="true" />
+                  </summary>
+                  <div>
+                    <h4>Context before code.</h4>
+                    <p>
+                      The assistant integrates LangSmith APIs with FastAPI and LiteLLM to analyze
+                      code and automate modifications. Context management and error handling help
+                      preserve the integrity of the existing codebase.
+                    </p>
+                    <h4>A companion in the terminal.</h4>
+                    <p>
+                      The CLI interprets agent responses and executes the necessary actions in the
+                      developer’s local environment, connecting the assistant to everyday
+                      development work.
+                    </p>
+                  </div>
+                </details>
+              </div>
+            </article>
+          </FadeIn>
+          <FadeIn>
+            <article className="project-card">
+              <Link
+                to="/blog/ai-video-pipeline-no-cloud"
+                className="project-art video-art"
+                aria-label="Read about the local AI video pipeline"
+              >
+                <span className="eyebrow art-label">FROM SCRIPT TO SCREEN</span>
+                <div className="video-equation" aria-hidden="true">
+                  <svg viewBox="0 0 120 100" fill="none">
+                    <path d="M15 80H105L15 10V80Z" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M15 67H28V80" stroke="currentColor" />
+                    <text x="53" y="95">
+                      a
+                    </text>
+                    <text x="3" y="48">
+                      b
+                    </text>
+                    <text x="65" y="40">
+                      c
+                    </text>
+                  </svg>
+                  <span>a² + b² = c²</span>
+                </div>
+                <div className="video-timeline" aria-hidden="true">
+                  <span className="timeline-play">▶</span>
+                  <div>
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </div>
+                  <span>00:60</span>
+                </div>
+              </Link>
+              <div className="project-card-content">
+                <p className="eyebrow">CREATIVE ENGINEERING / EXPERIMENT</p>
+                <h3>From a script to a story.</h3>
+                <p>
+                  A fully local AI video pipeline. Synthesized narration, synchronized animation,
+                  and a finished explainer—all built with open-source tools.
+                </p>
+                <div className="tags">
+                  <span>Kokoro TTS</span>
+                  <span>GSAP</span>
+                  <span>ffmpeg</span>
+                </div>
+                <Link className="text-link" to="/blog/ai-video-pipeline-no-cloud">
+                  Read the build story <ArrowUpRight size={18} aria-hidden="true" />
+                </Link>
+              </div>
+            </article>
+          </FadeIn>
+        </div>
+      </section>
+      <section className="about-section" id="about">
+        <div className="container section">
+          <FadeIn>
+            <SectionHeading
+              number="02"
+              label="THE ENGINEER BEHIND THE CODE"
+              title="Curiosity is the throughline."
+            />
+          </FadeIn>
+          <div className="about-grid">
+            <FadeIn className="portrait-wrap">
+              <img
+                src="/profile.webp"
+                alt="Sampat Choudhary outdoors in the mountains"
+                width="720"
+                height="884"
+                loading="lazy"
+              />
+              <div className="portrait-caption">
+                <MapPin size={14} aria-hidden="true" />
+                Bangalore, India<span>Always exploring.</span>
+              </div>
+            </FadeIn>
+            <FadeIn className="about-copy">
+              <p className="about-lead">
+                I care about what happens
+                <br className="desktop-break" />{' '}
+                <span className="muted">after the happy path.</span>
+              </p>
+              <p>
+                When a user interrupts an AI agent. When permissions span teams and organizations.
+                When a system needs to earn someone’s trust, every single time.
+              </p>
+              <p>
+                From building enterprise security at Microsoft to orchestrating real-time voice AI
+                at Prodigal, I’m drawn to the problems where good engineering makes a meaningful
+                difference.
+              </p>
+              <p>
+                I like working across the stack, asking the extra question, and turning what I learn
+                into something useful—whether that’s a production system, a side project, or a
+                write-up.
+              </p>
+              <div className="education" id="education">
+                <GraduationCap size={23} aria-hidden="true" />
+                <div>
+                  <strong>Indian Institute of Technology, Kanpur</strong>
+                  <span>B.Tech, Electrical Engineering · 2016–2020</span>
+                </div>
+              </div>
+              <a className="text-link" href="/sampat-resume.pdf" download>
+                Download my résumé <Download size={17} aria-hidden="true" />
               </a>
-              <a href="/sampat-resume.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 border border-neon-cyan/40 hover:border-neon-cyan/70 bg-neon-cyan/5 hover:bg-neon-cyan/10 px-8 py-3 rounded-lg font-medium transition-all hover:-translate-y-0.5 text-neon-cyan">
-                <Download className="w-4 h-4" />
-                Resume
-              </a>
-              <a href="#experience" onClick={(e) => { e.preventDefault(); document.getElementById('experience')?.scrollIntoView({ behavior: 'smooth' }); }} className="border border-gray-700 hover:border-gray-500 px-8 py-3 rounded-lg font-medium transition-all hover:-translate-y-0.5 text-gray-300">
-                View Experience
-              </a>
-            </div>
-            {/* Scroll indicator */}
-            <div className="hidden md:flex justify-center mt-16 animate-bounce">
-              <ChevronDown className="w-6 h-6 text-neon-cyan/40" />
-            </div>
+            </FadeIn>
+          </div>
+          <div className="expertise-grid" id="skills">
+            {skills.map(({ icon: Icon, title, text, tools }) => (
+              <FadeIn key={title}>
+                <div className="expertise-item">
+                  <Icon size={24} className="accent" aria-hidden="true" />
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                  <span>{tools}</span>
+                </div>
+              </FadeIn>
+            ))}
           </div>
         </div>
-      </header>
-
-      {/* Quick Info */}
-      <FadeIn>
-        <section className="py-12 bg-gray-900/50 border-y border-white/5">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="flex items-center gap-4 group">
-                <div className="p-3 rounded-lg bg-neon-magenta/10 group-hover:bg-neon-magenta/20 transition-colors">
-                  <MapPin className="w-6 h-6 text-neon-magenta" />
+      </section>
+      <section className="section container experience-section" id="experience">
+        <FadeIn>
+          <SectionHeading number="03" label="THE JOURNEY SO FAR" title="Built on experience.">
+            <a href="/sampat-resume.pdf" className="text-link" target="_blank" rel="noreferrer">
+              Full résumé <ArrowUpRight size={17} aria-hidden="true" />
+            </a>
+          </SectionHeading>
+        </FadeIn>
+        <div className="experience-list">
+          {experience.map((job, i) => (
+            <FadeIn key={`${job.company}-${job.role}`}>
+              <details className="experience-row" open={i === 0}>
+                <summary>
+                  <span
+                    className={`company-icon ${job.mark === 'ms' ? 'ms-icon' : ''}`}
+                    aria-hidden="true"
+                  >
+                    {job.mark === 'ms' ? (
+                      <span className="microsoft-mark">
+                        <i />
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                    ) : (
+                      job.mark
+                    )}
+                  </span>
+                  <span className="experience-company">
+                    <strong>
+                      {job.company}
+                      {job.current && <span className="current-badge">CURRENT</span>}
+                    </strong>
+                    <span>{job.role}</span>
+                  </span>
+                  <span className="experience-date">{job.date}</span>
+                  <ChevronDown className="details-chevron" size={20} aria-hidden="true" />
+                </summary>
+                <div className="experience-content">
+                  <h3>{job.summary}</h3>
+                  <ul>
+                    {job.points.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                  <p className="eyebrow">{job.stack}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Location</p>
-                  <p className="font-medium">Bangalore, India</p>
-                </div>
-              </div>
-              <a href="mailto:sampat0choudhary@gmail.com" className="flex items-center gap-4 group hover:text-neon-cyan transition-colors">
-                <div className="p-3 rounded-lg bg-neon-cyan/10 group-hover:bg-neon-cyan/20 transition-colors">
-                  <Mail className="w-6 h-6 text-neon-cyan" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">sampat0choudhary@gmail.com</p>
-                </div>
-              </a>
-              <div className="flex items-center gap-4 group">
-                <div className="p-3 rounded-lg bg-neon-green/10 group-hover:bg-neon-green/20 transition-colors">
-                  <Phone className="w-6 h-6 text-neon-green" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Phone</p>
-                  <p className="font-medium">+91 9251374401</p>
-                </div>
-              </div>
+              </details>
+            </FadeIn>
+          ))}
+        </div>
+        <FadeIn>
+          <div className="recognition" id="achievements">
+            <div className="recognition-mark" aria-hidden="true">
+              <ShieldCheck size={28} />
             </div>
+            <div>
+              <p className="eyebrow accent">A LITTLE RECOGNITION</p>
+              <h3>Inventing better ways to work.</h3>
+              <p>
+                Named on Microsoft patent <strong>MS 412647-US-NP</strong> for “Dynamic Control of
+                Multi-Nested OKR Alignment.” Authentication and permissions SME, mentor to interns
+                and new engineers.
+              </p>
+            </div>
+            <span className="recognition-index" aria-hidden="true">
+              ↗
+            </span>
           </div>
-        </section>
-      </FadeIn>
-
-      {/* Education Section */}
-      <section className="py-20" id="education">
-        <div className="container mx-auto px-6">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-12 text-center">Education</h2>
-          </FadeIn>
-          <FadeIn className="max-w-4xl mx-auto">
-            <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-cyan hover:border-neon-cyan/30">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 rounded-lg bg-neon-cyan/10">
-                  <GraduationCap className="w-10 h-10 text-neon-cyan" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold">Indian Institute of Technology, Kanpur</h3>
-                  <p className="text-xl text-gray-400">Bachelor of Technology in Electrical Engineering</p>
-                  <p className="text-gray-500">2016 - 2020</p>
-                </div>
-              </div>
-              <p className="text-gray-400">
-                Graduated from one of India's premier engineering institutions with a strong foundation in
-                electrical engineering principles, which has provided a solid base for understanding complex
-                systems and problem-solving approaches in software development.
-              </p>
-            </div>
-          </FadeIn>
-        </div>
+        </FadeIn>
       </section>
-
-      {/* Experience Section */}
-      <section className="py-20 bg-gray-900/50 border-y border-white/5" id="experience">
-        <div className="container mx-auto px-6">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-12 text-center">Professional Experience</h2>
-          </FadeIn>
-          <div className="space-y-8 relative">
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-neon-cyan/30 via-neon-magenta/20 to-neon-green/10"></div>
-
-            {/* Prodigal */}
-            <FadeIn>
-              <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-cyan hover:border-neon-cyan/30">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold text-neon-cyan">Senior Software Engineer</h3>
-                    <p className="text-xl text-gray-300">Prodigal</p>
-                    <p className="text-gray-500">April 2025 - Present</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 px-3 py-1 rounded-full text-sm">AI/ML</span>
-                    <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-3 py-1 rounded-full text-sm">Voice AI</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-gray-400">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-cyan rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-cyan/50"></div>
-                    <span>Collaborated with a team to develop and maintain ProAgent, a voice AI system that assists debt collectors through automated phone calls</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-cyan rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-cyan/50"></div>
-                    <span>Designed and built in-house voice orchestration infrastructure enabling real-time voice calls integrated with LLM-powered agents</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-cyan rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-cyan/50"></div>
-                    <span>Created multi-state prompt flows and implemented tools to support multi-agent systems for scalable multi-tenant deployments</span>
-                  </li>
-                </ul>
-              </div>
+      <section className="section writing-section container" id="writing">
+        <FadeIn>
+          <SectionHeading
+            number="04"
+            label="NOTES FROM THE WORKBENCH"
+            title="Building. Learning. Writing."
+          >
+            <Link to="/blog" className="text-link">
+              All writing <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+          </SectionHeading>
+        </FadeIn>
+        <div className="article-list">
+          {posts.slice(0, 2).map((post, i) => (
+            <FadeIn key={post.slug}>
+              <ArticleCard post={post} index={i} />
             </FadeIn>
-
-            {/* Microsoft SE II */}
-            <FadeIn>
-              <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-magenta hover:border-neon-magenta/30">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold text-neon-magenta">Software Engineer II</h3>
-                    <p className="text-xl text-gray-300">Microsoft</p>
-                    <p className="text-gray-500">Feb 2024 - April 2025</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-3 py-1 rounded-full text-sm">Authentication</span>
-                    <span className="bg-neon-green/10 text-neon-green border border-neon-green/20 px-3 py-1 rounded-full text-sm">Security</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-gray-400">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Designed user and S2S authentication and authorization layers for Viva Goals services</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Implemented Continuous Access Evaluation for Viva Goals to enhance security for Financial Services Industry</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Built background worker host service using Azure Event Hub and Azure Functions for audit log management</span>
-                  </li>
-                </ul>
-              </div>
-            </FadeIn>
-
-            {/* Microsoft SE I */}
-            <FadeIn>
-              <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-magenta hover:border-neon-magenta/30">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold text-neon-magenta">Software Engineer I</h3>
-                    <p className="text-xl text-gray-300">Microsoft</p>
-                    <p className="text-gray-500">Nov 2021 - Feb 2024</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 px-3 py-1 rounded-full text-sm">Full-Stack</span>
-                    <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-3 py-1 rounded-full text-sm">.NET</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-gray-400">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Designed scalable permission model for OKR application, managing resource permissions across users, groups, and teams</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Developed ASP.NET Core authentication service using MISE and SAL NuGet packages for enhanced security</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-magenta rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-magenta/50"></div>
-                    <span>Collaborated with Microsoft AuthNZ team to improve authentication security and implement PFT tokens</span>
-                  </li>
-                </ul>
-              </div>
-            </FadeIn>
-
-            {/* Ally.io */}
-            <FadeIn>
-              <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-green hover:border-neon-green/30">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold text-neon-green">Software Engineer</h3>
-                    <p className="text-xl text-gray-300">Ally.io</p>
-                    <p className="text-gray-500">Aug 2020 - Oct 2021</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-neon-green/10 text-neon-green border border-neon-green/20 px-3 py-1 rounded-full text-sm">Full-Stack</span>
-                    <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-3 py-1 rounded-full text-sm">Ruby on Rails</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 text-gray-400">
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-green rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-green/50"></div>
-                    <span>Revamped the admin application by adding multiple features to address frequently asked requests quickly for the Customer Support team</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-green rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-green/50"></div>
-                    <span>Developed features end-to-end using AngularJS and Ruby on Rails, building deep understanding of the Ruby on Rails framework</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-2 h-2 bg-neon-green rounded-full mt-2 flex-shrink-0 shadow-sm shadow-neon-green/50"></div>
-                    <span>Implemented various background jobs using Sidekiq and important features for data insights service using Golang and MongoDB</span>
-                  </li>
-                </ul>
-              </div>
-            </FadeIn>
-          </div>
+          ))}
         </div>
       </section>
-
-      {/* Skills Section */}
-      <section className="py-20" id="skills">
-        <div className="container mx-auto px-6">
+      <section className="contact-section" id="contact">
+        <div className="container">
           <FadeIn>
-            <h2 className="text-3xl font-bold mb-12 text-center">Technical Expertise</h2>
-          </FadeIn>
-          <FadeIn stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="p-6 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-neon-cyan/30 card-hover neon-cyan">
-              <Code2 className="w-12 h-12 text-neon-cyan mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Languages & Frameworks</h3>
-              <p className="text-gray-500">C#, .NET, Python, JavaScript, TypeScript, React, Angular, Ruby on Rails, Golang</p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-neon-magenta/30 card-hover neon-magenta">
-              <Database className="w-12 h-12 text-neon-magenta mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Cloud & Infrastructure</h3>
-              <p className="text-gray-500">Azure, Kubernetes, Docker, Event Hub, Azure Functions, MongoDB, SQL Server</p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-neon-green/30 card-hover neon-green">
-              <Brain className="w-12 h-12 text-neon-green mb-4" />
-              <h3 className="text-xl font-semibold mb-3">AI/ML & Voice</h3>
-              <p className="text-gray-500">LLM Integration, Voice AI, LiveKit, Deepgram STT, ElevenLabs TTS, LangSmith</p>
-            </div>
-            <div className="p-6 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-neon-yellow/30 card-hover neon-yellow">
-              <Shield className="w-12 h-12 text-neon-yellow mb-4" />
-              <h3 className="text-xl font-semibold mb-3">Security & Auth</h3>
-              <p className="text-gray-500">Authentication, Authorization, OAuth, S2S Auth, Continuous Access Evaluation</p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Achievements Section */}
-      <section className="py-20 bg-gray-900/50 border-y border-white/5" id="achievements">
-        <div className="container mx-auto px-6">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-12 text-center">Notable Achievements</h2>
-          </FadeIn>
-          <FadeIn stagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-yellow hover:border-neon-yellow/30">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 rounded-lg bg-neon-yellow/10">
-                  <Award className="w-10 h-10 text-neon-yellow" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold">Patent Holder</h3>
-                  <p className="text-gray-500">Microsoft Patent MS 412647-US-NP</p>
-                </div>
-              </div>
-              <p className="text-gray-400">
-                Conceived, designed, and implemented a solution for managing alignment permissions of multi-nested OKRs,
-                resulting in the patent "Dynamic Control of Multi-Nested OKR Alignment."
-              </p>
-            </div>
-            <div className="bg-gray-900/60 rounded-xl p-8 border border-gray-800 card-hover neon-cyan hover:border-neon-cyan/30">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 rounded-lg bg-neon-cyan/10">
-                  <Users className="w-10 h-10 text-neon-cyan" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold">Technical Leadership</h3>
-                  <p className="text-gray-500">Subject Matter Expert</p>
-                </div>
-              </div>
-              <p className="text-gray-400">
-                Became the SME for authentication and permission models at Microsoft, mentoring interns and new hires
-                while driving cross-functional collaboration on security matters.
-              </p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Projects Section */}
-      <section className="py-20" id="projects">
-        <div className="container mx-auto px-6">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-12 text-center">Side Projects</h2>
-          </FadeIn>
-          <FadeIn stagger className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="rounded-lg bg-gray-900/60 border border-gray-800 overflow-hidden hover:border-neon-cyan/30 card-hover neon-cyan">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3 text-neon-cyan">Agentic Code Assistant</h3>
-                <p className="text-gray-500 mb-4">
-                  Developed an intelligent code assistant using Python FastAPI and LiteLLM, integrating LangSmith APIs
-                  to enable automated code modification and analysis.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-2 py-1 rounded text-xs">Python</span>
-                  <span className="bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 px-2 py-1 rounded text-xs">FastAPI</span>
-                  <span className="bg-neon-green/10 text-neon-green border border-neon-green/20 px-2 py-1 rounded text-xs">AI/ML</span>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Features robust error handling and context management for accurate code modifications while preserving codebase integrity.
-                </p>
-              </div>
-            </div>
-            <div className="rounded-lg bg-gray-900/60 border border-gray-800 overflow-hidden hover:border-neon-magenta/30 card-hover neon-magenta">
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-3 text-neon-magenta">CLI Development Tool</h3>
-                <p className="text-gray-500 mb-4">
-                  Built a complementary CLI frontend tool that interprets agent responses and executes necessary actions
-                  directly in the user's development environment.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 px-2 py-1 rounded text-xs">CLI</span>
-                  <span className="bg-neon-magenta/10 text-neon-magenta border border-neon-magenta/20 px-2 py-1 rounded text-xs">Automation</span>
-                  <span className="bg-neon-green/10 text-neon-green border border-neon-green/20 px-2 py-1 rounded text-xs">DevOps</span>
-                </div>
-                <p className="text-gray-400 text-sm">
-                  Enables seamless integration between AI agents and development workflows for enhanced productivity.
-                </p>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20 bg-gray-900/50 border-y border-white/5" id="contact">
-        <div className="container mx-auto px-6">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-4 text-center">Get in Touch</h2>
-            <p className="text-gray-500 text-center mb-12 max-w-lg mx-auto">
-              Interested in collaborating or have a question? Feel free to reach out through any of the channels below.
+            <p className="eyebrow">
+              <span className="status-dot" />
+              OPEN TO INTERESTING CONVERSATIONS
             </p>
-          </FadeIn>
-          <FadeIn stagger className="flex flex-col md:flex-row gap-6 items-center justify-center">
-            <a href="https://github.com/pilot617" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-lg hover:text-neon-cyan transition-all bg-gray-900/60 px-6 py-4 rounded-lg border border-gray-800 hover:border-neon-cyan/30 card-hover neon-cyan w-full md:w-auto justify-center">
-              <Github className="w-6 h-6" /> GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/sampat-choudhary-996b75155/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-lg hover:text-neon-magenta transition-all bg-gray-900/60 px-6 py-4 rounded-lg border border-gray-800 hover:border-neon-magenta/30 card-hover neon-magenta w-full md:w-auto justify-center">
-              <Linkedin className="w-6 h-6" /> LinkedIn
-            </a>
-            <a href="mailto:sampat0choudhary@gmail.com" className="flex items-center gap-3 text-lg hover:text-neon-green transition-all bg-gray-900/60 px-6 py-4 rounded-lg border border-gray-800 hover:border-neon-green/30 card-hover neon-green w-full md:w-auto justify-center">
-              <Mail className="w-6 h-6" /> Email
-            </a>
+            <div className="contact-main">
+              <h2>
+                Good things start
+                <br />
+                with a <span>conversation.</span>
+              </h2>
+              <a
+                href="mailto:sampat0choudhary@gmail.com"
+                className="contact-arrow"
+                aria-label="Email Sampat"
+              >
+                <ArrowUpRight aria-hidden="true" />
+              </a>
+            </div>
+            <div className="contact-bottom">
+              <div>
+                <p>Have a hard problem, a big idea, or just a hello?</p>
+                <div className="email-row">
+                  <a href="mailto:sampat0choudhary@gmail.com">sampat0choudhary@gmail.com</a>
+                  <button
+                    className="icon-button copy-email"
+                    onClick={copyEmail}
+                    aria-label="Copy email address"
+                  >
+                    {copyStatus === 'Email copied' ? (
+                      <Check size={18} aria-hidden="true" />
+                    ) : (
+                      <Copy size={18} aria-hidden="true" />
+                    )}
+                  </button>
+                </div>
+                <span className="copy-status" role="status">
+                  {copyStatus}
+                </span>
+              </div>
+              <div className="contact-socials">
+                <a href="https://github.com/pilot617" target="_blank" rel="noreferrer">
+                  GitHub <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/sampat-choudhary-996b75155/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  LinkedIn <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+                <a href="tel:+919251374401">
+                  Call me <ArrowUpRight size={16} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
           </FadeIn>
         </div>
       </section>
