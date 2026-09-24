@@ -190,7 +190,7 @@ export default function HomePage() {
             </a>
           </div>
           <div className="hero-person">
-            <img src="/profile.webp" alt="" width="40" height="40" />
+            <img src="/sam-portfolio.webp" alt="" width="40" height="40" />
             <div>
               Currently building voice AI at <strong>Prodigal</strong>
               <span>Previously Microsoft · Based in Bangalore, India</span>
@@ -433,10 +433,10 @@ export default function HomePage() {
           <div className="about-grid">
             <FadeIn className="portrait-wrap">
               <img
-                src="/profile.webp"
-                alt="Sampat Choudhary outdoors in the mountains"
+                src="/sam-portfolio.webp"
+                alt="Sampat Choudhary wearing a black blazer and sunglasses"
                 width="720"
-                height="884"
+                height="789"
                 loading="lazy"
               />
               <div className="portrait-caption">

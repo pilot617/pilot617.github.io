@@ -23,7 +23,7 @@ npm run preview
 - `src/pages/HomePage.tsx`: introduction, projects, experience, education, expertise, and contact.
 - `src/content/blog/*.md`: articles, with `title`, `date`, `description`, and `tags` in frontmatter. Filenames become slugs; the index sorts newest first.
 - `public/sampat-resume.pdf`: résumé.
-- `public/profile.webp`: optimized portrait; original image retained.
+- `public/sam-portfolio.webp`: optimized current portrait.
 - `src/index.css`: shared design tokens, responsive components, and article typography.
 - `design-system/sampat-choudhary/MASTER.md`: visual direction and implementation rules informed by UI/UX Pro Max.
 

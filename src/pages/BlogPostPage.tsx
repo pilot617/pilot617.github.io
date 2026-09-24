@@ -60,7 +60,7 @@ export default function BlogPostPage() {
           <h1>{post.title}</h1>
           <p className="article-deck">{post.description}</p>
           <div className="article-author">
-            <img src="/profile.webp" alt="" width="40" height="40" />
+            <img src="/sam-portfolio.webp" alt="" width="40" height="40" />
             <div>
               <strong>Sampat Choudhary</strong>
               <span>Software engineer. Always learning.</span>
